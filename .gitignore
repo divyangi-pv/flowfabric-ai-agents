@@ -1,0 +1,72 @@
+# ==========================
+# Python
+# ==========================
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+pytest_cache/
+.pytest_cache/
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# ==========================
+# Environment & Secrets
+# ==========================
+.env
+.env.local
+*.secret
+*.key
+
+# ==========================
+# IntelliJ / PyCharm / JetBrains
+# ==========================
+.idea/
+*.iml
+out/
+
+# ==========================
+# VS Code
+# ==========================
+.vscode/
+
+# ==========================
+# OS generated files
+# ==========================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ==========================
+# Logs
+# ==========================
+*.log
+logs/

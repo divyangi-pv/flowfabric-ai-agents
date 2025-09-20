@@ -1,0 +1,17 @@
+# Core MCP server
+fastmcp==0.3.0
+
+# HTTP client (async)
+httpx>=0.26,<0.28
+
+# Data validation / schemas (fastmcp 0.3.0 requires v2)
+pydantic>=2.5,<3.0
+
+# Environment variable management
+python-dotenv>=1.0,<2.0
+
+# --- Dev & Testing Tools ---
+pytest-asyncio>=0.23,<1.0
+pytest>=8.0,<9.0
+black>=24.0,<25.0
+flake8>=7.0,<8.0
