@@ -1,7 +1,7 @@
 import os
 import pytest
 import httpx
-from mcp_tools.ticket_fetch_mcp import fetch_tickets, TicketFetchInput
+from mcp_tools.version_support_assistant import fetch_tickets, TicketFetchInput
 
 # --------------------------
 # Unit test (mocked Jira API)
