@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 load_dotenv()
 
-mcp = FastMCP("ticket-fetcher")
+mcp = FastMCP("version-support-assistant")
 
 
 # -----------------------------
