@@ -37,16 +37,24 @@ The first tool implemented is **`ticket.fetch`**, which fetches new version supp
 Clone the repository and create a virtual environment:
 
 ```bash
-git clone <repo-url>
-cd version-support-mcp
+git clone https://github.com/divyangi-pv/flowfabric-ai-agents.git
+cd flowfabric-ai-agents
 
-# Create virtual environment
+# Remove the existing broken venv
+rm -rf venv
+
+# Create a new virtual environment
 python3 -m venv venv
-source venv/bin/activate   # Mac/Linux
-venv\Scripts\activate      # Windows
 
-# Install dependencies (pinned for compatibility)
-pip install --upgrade --force-reinstall -r requirements.txt
+# Activate it
+source venv/bin/activate
+
+# Verify it's working
+which python3
+which pip3
+
+# Install requirements
+pip3 install --upgrade --force-reinstall -r requirements.txt
 ```
 
 ---
