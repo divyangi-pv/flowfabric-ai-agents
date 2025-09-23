@@ -1,7 +1,10 @@
-# Version Support MCP Tools
+# FlowFabric AI Agents
 
-This project contains **MCP (Model Context Protocol) tools** to help automate **version support triaging**.  
-The first tool implemented is **`ticket.fetch`**, which fetches new version support tickets from Jira/ServiceNow.
+This project contains **MCP (Model Context Protocol) tools** to help automate various workflows:
+
+- **version-support-assistant**: Automate version support triaging
+- **tests-triaging-assistant**: Handle nightly test results
+- **release-signoff-assistant**: Manage release sign-off workflows
 
 ---
 
@@ -86,10 +89,26 @@ python3 run_server.py
 
 Expected output:
 ```
-[MCP] Server 'version-support-assistant' started (listening on stdio)
+[MCP] Server 'flowfabric-ai-agents' started (listening on stdio)
 ```
 
 Now your MCP tools are available to assistants like **Amazon Q Chat in IntelliJ** or **GitHub Copilot**.
+
+## 🔧 Available Tools
+
+### Version Support Assistant
+- `ticket.fetch` - Fetch version support tickets from Jira
+- `ticket.comment` - Add comments to Jira tickets
+- `ticket.accepted` - Update ticket status to Accepted
+- `gerrit.create_pr` - Create Gerrit pull requests
+
+### Tests Triaging Assistant
+- 
+- 
+
+### Release Signoff Assistant
+- 
+- 
 
 ---
 
