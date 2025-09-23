@@ -3,7 +3,6 @@ import requests
 from typing import List, Dict, Any, Optional
 from dotenv import load_dotenv
 from fastmcp import FastMCP
-from pydantic import BaseModel
 
 load_dotenv()
 
