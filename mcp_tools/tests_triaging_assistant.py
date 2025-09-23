@@ -3,7 +3,7 @@ from fastmcp import FastMCP
 
 load_dotenv()
 
-mcp = FastMCP("deployment-assistant")
+mcp = FastMCP("tests-triaging-assistant")
 
 # -----------------------------
 # Schemas
