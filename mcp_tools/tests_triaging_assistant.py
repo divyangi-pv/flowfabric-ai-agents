@@ -115,10 +115,10 @@ def fetch_build_with_failures(input: JenkinsBuildFetchInput) -> dict:
                             continue
 
                         failed_tests.append({
-                            "api": case.get("className", ""),
-                            "error_details": error_details,
-                            "stack_trace": stack_trace,
-                            "standard_output": case.get("stdout", "")
+                            "api": case.get("className", "")[:200],
+                            "error_details": error_details[:200],
+                            "stack_trace": stack_trace[:100],
+                            "standard_output": case.get("stdout", "")[:100]
                         })
 
             return {
@@ -147,28 +147,32 @@ async def fetch_build_issues():
     async with httpx.AsyncClient(auth=(JIRA_USER, JIRA_TOKEN)) as client:
         resp = await client.get(url, params={
             "jql": jql,
-            "maxResults": 50,
-            "fields": "key,summary,status,assignee,created,customfield_17545,customfield_17737,customfield_17736"
+            "maxResults": 20,  # Reduced from 50 to 20
+            "fields": "key,summary,status,created,customfield_17737,customfield_17736"  # Removed description field
         })
         resp.raise_for_status()
         data = resp.json()
 
     issues = []
     for issue in data.get("issues", []):
+        # Truncate title if too long
+        title = issue["fields"]["summary"]
+        if len(title) > 100:
+            title = title[:97] + "..."
+            
         issues.append({
             "key": issue["key"],
-            "title": issue["fields"]["summary"],
-            "description": issue["fields"].get("customfield_17545"),
+            "title": title,
             "status": issue["fields"]["status"]["name"],
-            "created": issue["fields"]["created"],
-            "last_seen": issue["fields"].get("customfield_17737"),
+            "created": issue["fields"]["created"][:10],  # Only date part
+            "last_seen": issue["fields"].get("customfield_17737", "")[:10] if issue["fields"].get("customfield_17737") else None,
             "frequency": (
                 issue["fields"]["customfield_17736"]["value"]
                 if issue["fields"].get("customfield_17736") else None
             )
         })
 
-    return issues
+    return {"issues": issues, "total": len(issues)}
 
 @mcp.tool("build_issues.create")
 async def create_build_issue(input: BuildIssueCreateInput):
