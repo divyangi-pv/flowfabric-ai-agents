@@ -301,6 +301,7 @@ async def update_jira_build_issue(input: BuildIssueUpdateInput):
         "status_updated": status_updated if status_updated else "not updated"
     }
 
+
 # -----------------------------
 # Entry Point
 # -----------------------------
