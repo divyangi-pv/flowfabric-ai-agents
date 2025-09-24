@@ -184,7 +184,7 @@ async def accept_ticket(input: StatusUpdateInput) -> StatusUpdateOutput:
         return StatusUpdateOutput(success=False, error="Missing Jira credentials in .env")
 
     url = f"{JIRA_URL}/rest/api/3/issue/{input.ticket_id}/transitions"
-    payload = {"transition": {"name": "Accepted"}}
+    payload = {"transition": {"id": "71"}}
 
     try:
         async with httpx.AsyncClient(auth=(JIRA_USER, JIRA_TOKEN)) as client:
