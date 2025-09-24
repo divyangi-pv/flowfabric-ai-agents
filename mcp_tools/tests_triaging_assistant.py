@@ -271,13 +271,14 @@ async def update_jira_build_issue(input: BuildIssueUpdateInput):
     if not all([JIRA_URL, JIRA_USER, JIRA_TOKEN]):
         raise RuntimeError("Missing Jira credentials in .env")
 
+
+    last_seen_value = get_current_datetime()
     async with httpx.AsyncClient(auth=(JIRA_USER, JIRA_TOKEN)) as client:
         # Build payload with only provided fields
         payload = {"fields": {}}
 
-        # Update last seen if provided
-        if input.last_seen is not None:
-            payload["fields"]["customfield_17737"] = input.last_seen
+        # Update last seen
+        payload["fields"]["customfield_17737"] = last_seen_value
 
         # Update fields if any are provided
         if payload["fields"]:
@@ -308,12 +309,12 @@ async def update_jira_build_issue(input: BuildIssueUpdateInput):
                     await client.post(trans_url, json=trans_payload)
                     status_updated = input.status
             except:
-                pass  # Status transition failed
+                pass
 
     return {
         "success": True,
         "issue_id": input.issue_id,
-        "last_seen_updated": input.last_seen if input.last_seen is not None else "not updated",
+        "last_seen_updated": last_seen_value,
         "status_updated": status_updated if status_updated else "not updated"
     }
 
