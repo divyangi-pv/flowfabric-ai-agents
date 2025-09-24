@@ -4,7 +4,7 @@ import os
 import httpx
 from dotenv import load_dotenv
 from fastmcp import FastMCP
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 load_dotenv()
 
@@ -35,14 +35,17 @@ class TicketFetchInput(BaseModel):
     component: str = "Planview AgilePlace"
     limit: int = 100
 
+def get_current_datetime():
+    return datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S.000-0700")
+
 class BuildIssueCreateInput(BaseModel):
     component: str = "Planview AgilePlace"
     label: str = "Denim"
     title: str
     sample_builds: str = ""
-    first_seen: str = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S.000-0700")
+    first_seen: str = Field(default_factory=get_current_datetime)
     frequency: str = "Occasionally"
-    last_seen: str = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S.000-0700")
+    last_seen: str = Field(default_factory=get_current_datetime)
     tests_affected: str = ""
     failure_message: str = ""
     stacktrace: str = ""
@@ -78,24 +81,27 @@ def fetch_build_with_failures(input: JenkinsBuildFetchInput) -> dict:
 
             build_number = build_info.get("number")
             status = build_info.get("result")
+            build_url = build_info.get("url")
 
             if status == "SUCCESS":
                 return {
                     "job": job_name,
                     "buildNumber": build_number,
+                    "buildUrl": build_url,
                     "status": status,
                     "failed_tests": [],
                     "message": "Build passed - no failures to report"
                 }
 
-            # Get test report using correct format
-            test_url = f"{base_url}/job/connector-leankit/4307/testReport/api/json"
+            # Get test report using dynamic build number
+            test_url = f"{base_url}/job/{job_name}/{build_number}/testReport/api/json"
             test_response = client.get(test_url)
 
             if test_response.status_code != 200:
                 return {
                     "job": job_name,
                     "buildNumber": build_number,
+                    "buildUrl": build_url,
                     "status": status,
                     "failed_tests": [],
                     "message": "No test report available"
@@ -114,16 +120,22 @@ def fetch_build_with_failures(input: JenkinsBuildFetchInput) -> dict:
                         if not error_details and not stack_trace:
                             continue
 
+                        # Build full test name with parameters
+                        class_name = case.get("className", "")
+                        test_name = case.get("name", "")
+                        full_test_name = f"{class_name}.{test_name}" if class_name and test_name else class_name
+
                         failed_tests.append({
-                            "api": case.get("className", "")[:200],
-                            "error_details": error_details[:200],
-                            "stack_trace": stack_trace[:100],
-                            "standard_output": case.get("stdout", "")[:100]
+                            "api": full_test_name,
+                            "error_details": error_details,
+                            "stack_trace": stack_trace[:300],
+                            ##"standard_output": case.get("stdout", "")[:100]
                         })
 
             return {
                 "job": job_name,
                 "buildNumber": build_number,
+                "buildUrl": build_url,
                 "status": status,
                 "failed_tests": failed_tests,
                 "total_failures": len(failed_tests)
@@ -147,32 +159,28 @@ async def fetch_build_issues():
     async with httpx.AsyncClient(auth=(JIRA_USER, JIRA_TOKEN)) as client:
         resp = await client.get(url, params={
             "jql": jql,
-            "maxResults": 20,  # Reduced from 50 to 20
-            "fields": "key,summary,status,created,customfield_17737,customfield_17736"  # Removed description field
+            "maxResults": 50,
+            "fields": "key,summary,status,assignee,created,customfield_17545,customfield_17737,customfield_17736"
         })
         resp.raise_for_status()
         data = resp.json()
 
     issues = []
     for issue in data.get("issues", []):
-        # Truncate title if too long
-        title = issue["fields"]["summary"]
-        if len(title) > 100:
-            title = title[:97] + "..."
-            
         issues.append({
             "key": issue["key"],
-            "title": title,
+            "title": issue["fields"]["summary"],
+            "description": issue["fields"].get("customfield_17545"),
             "status": issue["fields"]["status"]["name"],
-            "created": issue["fields"]["created"][:10],  # Only date part
-            "last_seen": issue["fields"].get("customfield_17737", "")[:10] if issue["fields"].get("customfield_17737") else None,
+            "created": issue["fields"]["created"],
+            "last_seen": issue["fields"].get("customfield_17737"),
             "frequency": (
                 issue["fields"]["customfield_17736"]["value"]
                 if issue["fields"].get("customfield_17736") else None
             )
         })
 
-    return {"issues": issues, "total": len(issues)}
+    return issues
 
 @mcp.tool("build_issues.create")
 async def create_build_issue(input: BuildIssueCreateInput):
