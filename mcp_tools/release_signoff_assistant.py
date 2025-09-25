@@ -1,6 +1,7 @@
 import os
 import requests
 from typing import List, Dict, Any, Optional
+from pydantic import BaseModel
 from dotenv import load_dotenv
 from fastmcp import FastMCP
 
@@ -34,7 +35,7 @@ class UpdateTicketWithTaskUrlsRequest(BaseModel):
 
 class UpdateTicketStatusRequest(BaseModel):
     ticket_key: str
-    status: str = "Done"
+    status: str = "Approved"
     label: str = "Denim"
 
 # -----------------------------
@@ -179,25 +180,37 @@ def extract_versions_from_description(description: Any) -> Dict[str, str]:
     for paragraph in content:
         if paragraph.get('type') == 'paragraph':
             paragraph_content = paragraph.get('content', [])
+            
+            # Look through all text elements in this paragraph
             for i, item in enumerate(paragraph_content):
                 if item.get('type') == 'text':
-                    text = item.get('text', '')
-                    # Look for connector version
-                    if 'Current Connector Version:' in text and i + 1 < len(paragraph_content):
-                        next_item = paragraph_content[i + 1]
-                        if next_item.get('type') == 'text':
-                            versions['current_connector_version'] = next_item.get('text', '').strip()
-                    # Look for SDK version
-                    elif 'Current SDK Version:' in text and i + 1 < len(paragraph_content):
-                        next_item = paragraph_content[i + 1]
-                        if next_item.get('type') == 'text':
-                            versions['current_sdk_version'] = next_item.get('text', '').strip()
-                    # Look for platform version
-                    elif 'Platform Version:' in text:
-                        # Extract version from the same text element
-                        platform_text = text.replace('Platform Version:', '').strip()
-                        if platform_text:
-                            versions['current_platform_version'] = platform_text
+                    text = item.get('text', '').strip()
+                    marks = item.get('marks', [])
+                    
+                    # Check if this is a version number (has code formatting and looks like a version)
+                    if any(mark.get('type') == 'code' for mark in marks) and '.' in text and len(text) > 10:
+                        # Look backwards to see what this version is for
+                        for j in range(i - 1, -1, -1):
+                            prev_item = paragraph_content[j]
+                            if prev_item.get('type') == 'text':
+                                prev_text = prev_item.get('text', '').strip()
+                                if 'Platform Version' in prev_text:
+                                    versions['current_platform_version'] = text
+                                    break
+                                elif 'Current Connector Version' in prev_text:
+                                    versions['current_connector_version'] = text
+                                    break
+                                elif 'Current SDK Version' in prev_text:
+                                    versions['current_sdk_version'] = text
+                                    break
+                                elif 'Previous Connector Version' in prev_text:
+                                    if not versions['current_connector_version']:
+                                        versions['current_connector_version'] = text
+                                    break
+                                elif 'Previous SDK Version' in prev_text:
+                                    if not versions['current_sdk_version']:
+                                        versions['current_sdk_version'] = text
+                                    break
 
     return versions
 
@@ -804,11 +817,11 @@ def update_ticket_with_task_urls(request: UpdateTicketWithTaskUrlsRequest) -> Di
 @mcp.tool()
 def update_ticket_status(request: UpdateTicketStatusRequest) -> Dict[str, Any]:
     """
-    Update ticket status to Done and set label to Denim.
+    Update ticket status to Approved and set label to Denim.
 
     Args:
         ticket_key: Jira ticket key (e.g., CON-25671)
-        status: Target status (default: Done)
+        status: Target status (default: Approved)
         label: Label to add (default: Denim)
 
     Returns:
@@ -834,14 +847,14 @@ def update_ticket_status(request: UpdateTicketStatusRequest) -> Dict[str, Any]:
 
         transitions = response.json().get('transitions', [])
 
-        # Find transition to Done status
-        done_transition_id = None
+        # Find transition to target status
+        target_transition_id = None
         for transition in transitions:
             if transition['to']['name'].lower() == request.status.lower():
-                done_transition_id = transition['id']
+                target_transition_id = transition['id']
                 break
 
-        if not done_transition_id:
+        if not target_transition_id:
             available_statuses = [t['to']['name'] for t in transitions]
             return {
                 'success': False,
@@ -864,10 +877,10 @@ def update_ticket_status(request: UpdateTicketStatusRequest) -> Dict[str, Any]:
             headers={'Accept': 'application/json', 'Content-Type': 'application/json'}
         )
 
-        # Transition to Done
+        # Transition to target status
         transition_payload = {
             "transition": {
-                "id": done_transition_id
+                "id": target_transition_id
             }
         }
 
@@ -883,7 +896,7 @@ def update_ticket_status(request: UpdateTicketStatusRequest) -> Dict[str, Any]:
             'ticket_key': request.ticket_key,
             'status_updated': request.status,
             'label_added': request.label,
-            'transition_id': done_transition_id,
+            'transition_id': target_transition_id,
             'label_update_status': label_response.status_code,
             'transition_status': transition_response.status_code
         }

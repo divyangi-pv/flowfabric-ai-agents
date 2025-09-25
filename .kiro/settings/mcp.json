@@ -1,0 +1,34 @@
+{
+  "mcpServers": {
+    "release-signoff-automation": {
+      "command": "/Users/divyangi/personal/flowfabric-ai-agents/venv/bin/python3",
+      "args": [
+        "-m",
+        "mcp_tools.release_signoff"
+      ],
+      "env": {
+        "PYTHONPATH": "/Users/divyangi/personal/flowfabric-ai-agents",
+        "RELEASE_SIGNOFF_CONFIG": "/Users/divyangi/personal/flowfabric-ai-agents/config/release_signoff_example.json"
+      },
+      "disabled": false,
+      "disabledTools": []
+    },
+    "version-support-assistant": {
+      "command": "/Users/divyangi/personal/flowfabric-ai-agents/venv/bin/python3",
+      "args": [
+        "/Users/divyangi/personal/flowfabric-ai-agents/mcp_tools/version_support_assistant.py"
+      ],
+      "env": {
+        "PYTHONPATH": "/Users/divyangi/personal/flowfabric-ai-agents"
+      },
+      "disabled": true,
+      "autoApprove": [
+        "ticket.fetch",
+        "ticket.comment",
+        "ticket.accepted",
+        "gerrit.create_pr"
+      ],
+      "disabledTools": []
+    }
+  }
+}

@@ -26,28 +26,28 @@ def main():
     
     # Run unit tests only (fast)
     if not run_command(
-        ["python", "-m", "pytest", "tests/test_models.py", "tests/test_utils.py", "tests/test_release_signoff.py", "-v"],
+        ["python3", "-m", "pytest", "tests/test_models.py", "tests/test_utils.py", "tests/test_release_signoff.py", "-v"],
         "Unit Tests (Models, Utils & Release Sign-off)"
     ):
         success = False
     
     # Run MCP tool tests with mocking
     if not run_command(
-        ["python", "-m", "pytest", "tests/test_version_support.py", "tests/test_release_signoff.py", "-v"],
+        ["python3", "-m", "pytest", "tests/test_version_support.py", "tests/test_release_signoff.py", "-v"],
         "Unit Tests (Version Support & Release Sign-off)"
     ):
         success = False
     
     # Run integration tests with mocks
     if not run_command(
-        ["python", "-m", "pytest", "tests/test_integration.py", "-v", "-m", "integration", "--ignore-glob=*live*"],
+        ["python3", "-m", "pytest", "tests/test_integration.py", "-v", "-m", "integration", "--ignore-glob=*live*"],
         "Integration Tests (Mocked)"
     ):
         success = False
     
     # Run all tests
     if not run_command(
-        ["python", "-m", "pytest", "tests/", "-v", "--tb=short"],
+        ["python3", "-m", "pytest", "tests/", "-v", "--tb=short"],
         "All Tests"
     ):
         success = False
