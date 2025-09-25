@@ -201,6 +201,7 @@ def extract_versions_from_description(description: Any) -> Dict[str, str]:
 
     return versions
 
+
 # -----------------------------
 # MCP Tool Implementation
 # -----------------------------

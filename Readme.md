@@ -125,7 +125,6 @@ Now your MCP tools are available to assistants like **Amazon Q Chat in IntelliJ*
 - `update_ticket_with_task_urls` - Add related task URLs to release ticket
 - `update_ticket_status` - Mark ticket as Done with Denim label
 
----
 
 ## 🧪 Running Tests
 
