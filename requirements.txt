@@ -4,6 +4,9 @@ fastmcp==0.3.0
 # HTTP client (async)
 httpx>=0.26,<0.28
 
+# HTTP client (sync) for Jira API
+requests>=2.31,<3.0
+
 # Data validation / schemas (fastmcp 0.3.0 requires v2)
 pydantic>=2.5,<3.0
 
