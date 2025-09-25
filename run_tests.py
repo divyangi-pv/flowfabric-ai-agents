@@ -26,15 +26,15 @@ def main():
     
     # Run unit tests only (fast)
     if not run_command(
-        ["python", "-m", "pytest", "tests/test_models.py", "tests/test_utils.py", "-v"],
-        "Unit Tests (Models & Utils)"
+        ["python", "-m", "pytest", "tests/test_models.py", "tests/test_utils.py", "tests/test_release_signoff.py", "-v"],
+        "Unit Tests (Models, Utils & Release Sign-off)"
     ):
         success = False
     
     # Run MCP tool tests with mocking
     if not run_command(
-        ["python", "-m", "pytest", "tests/test_mcp_tools.py", "-v", "-m", "unit"],
-        "Unit Tests (MCP Tools with Mocking)"
+        ["python", "-m", "pytest", "tests/test_version_support.py", "tests/test_release_signoff.py", "-v"],
+        "Unit Tests (Version Support & Release Sign-off)"
     ):
         success = False
     
