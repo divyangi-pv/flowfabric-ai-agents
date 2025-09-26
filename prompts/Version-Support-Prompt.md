@@ -32,7 +32,7 @@ Based on the tool and version type, determine:
 - If connector is not listed in Version-Support-Rules.md, then ignore the connectors and do not proceed further.
 
 ### Step 3: Code Implementation
-- Set @/Users/divyangi/tasktop/flowfabric as context
+- Set @/Users/divyangi/tasktop/flowfabric/connector as context
 - Identify all the required code changes
 
 ## Step 4: Create PR
