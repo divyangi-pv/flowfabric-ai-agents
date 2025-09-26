@@ -63,6 +63,7 @@ class GerritPRInput(BaseModel):
 class GerritPROutput(BaseModel):
     success: bool
     change_id: str | None = None
+    pr_url: str | None = None
     error: str | None = None
 
 # -----------------------------
@@ -220,14 +221,16 @@ async def create_gerrit_pr(input: GerritPRInput) -> GerritPROutput:
             check=True
         )
         
-        # Extract change ID from output
+        # Extract change ID and URL from output
         change_id = None
+        pr_url = None
         for line in result.stderr.split("\n"):
-            if "Change-Id:" in line:
+            if "remote:" in line and "https://" in line:
+                pr_url = line.split("remote:")[1].strip()
+            elif "Change-Id:" in line:
                 change_id = line.split("Change-Id:")[1].strip()
-                break
         
-        return GerritPROutput(success=True, change_id=change_id)
+        return GerritPROutput(success=True, change_id=change_id, pr_url=pr_url)
     
     except subprocess.CalledProcessError as e:
         return GerritPROutput(success=False, error=f"Git command failed: {e.stderr}")

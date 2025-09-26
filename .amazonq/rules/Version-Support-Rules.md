@@ -8,9 +8,6 @@
 
 ## Version Support Decision Matrix
 
-### Default Rule
-If there are no breaking API changes, claim support by upgrading to the version.
-
 ### GitLab Issues
 - **Major (Support)**: Test All
 - **Minor (Support)**: Always Claim Support
@@ -34,10 +31,29 @@ If there are no breaking API changes, claim support by upgrading to the version.
 ## Processing Workflow
 1. **Fetch Tickets**: Get all "To Triage" version support tickets
 2. **Analyze Version**: Determine version type (major/minor/patch) and platform
-3. **Apply Decision**: Use matrix rules to determine support approach
+3. **Apply Decision**: Use decision matrix to determine support approach
+4. **Create PR**: Generate Gerrit PR if claiming support with upgrade
 4. **Update Ticket**: Add comment with decision and reasoning
 5. **Accept Ticket**: Mark as Accepted
-6. **Create PR**: Generate Gerrit PR if claiming support with upgrade
+
+## Gerrit Commit Message Template
+```
+Added Support for [Connector name] [Version Number]
+
+- Describe the changes made to support not more than 50 words
+
+```
+
+## Jira Comment Message Template
+```
+Version Analysis:
+- Current version tested: [Current Version]
+- New version: [Requested Version]
+- Version change type: [Major/Minor/Patch]
+- Testing strategy: [Test All/Test Some/Always Claim Support]
+- Samanage ticket required: [Yes - New Instance/Upgrade | No]   
+- PR link: [Gerrit PR link]
+```
 
 ## Error Handling
 - Do not continue processing if some operations fail. Highlight errors clearly.

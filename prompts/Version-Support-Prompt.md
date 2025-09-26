@@ -37,15 +37,11 @@ Based on the tool and version type, determine:
 
 ## Step 4: Create PR
 - Create a Gerrit PR with WIP flag with the necessary changes
-- Use commit message template mentioned in Version-Support-Rules.md
+- Commit changes using the commit message template in Version-Support-Rules.md
 - Return PR link for review
 
-### Step 5: Generate Comment
-Use the strategy comment format to document:
-- Version analysis
-- Strategy recommendation
-- Infrastructure requirements
-- Next steps
+### Step 5: Generate Comment in Jira Ticket
+- Add a comment to the Jira ticket using `ticket.comment` using the format in Version-Support-Rules.md
 
 ### Step 6: Accept Ticket
 - Mark the ticket as accepted using `ticket.accepted`
