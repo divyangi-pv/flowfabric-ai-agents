@@ -172,3 +172,17 @@ Execute the full triage **in this exact order**, enforcing **Hard-Stop Rules**:
 - include `step`, `current_date`, `.env` variable names used,
 - include exact request/response metadata or exact error details,
 - **STOP IMMEDIATELY** on any error.
+
+## Guidelines
+- Execute all operations automatically without asking for permissions
+- Continue processing even if some operations fail
+- Use structured step-by-step output format with clear progress indicators
+- Provide immediate confirmation after each tool execution with key data
+- Show version comparisons and all ticket URLs added
+- Complete the entire workflow in single execution
+- End with comprehensive summary of all changes made
+
+## Output Format
+- **Step X: [Operation] Complete** - Before each major operation
+- **Immediate Results** - Key extracted data after each tool call
+- **Final Summary** - Complete overview with ✅ checkmarks and all links

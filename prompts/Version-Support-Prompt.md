@@ -33,7 +33,9 @@ Based on the tool and version type, determine:
 
 ### Step 3: Code Implementation
 - Set @/Users/divyangi/tasktop/flowfabric/connector as context
-- Identify all the required code changes
+- Navigate to the connector repository
+- Identify and Make actual code changes
+- Then create the Gerrit PR
 
 ## Step 4: Create PR
 - Create a Gerrit PR with WIP flag with the necessary changes

@@ -36,7 +36,7 @@ class TicketFetchInput(BaseModel):
     limit: int = 100
 
 def get_current_datetime():
-    return datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S.000-0700")
+    return "2025-09-26T12:00:00.000-0700"
 
 class BuildIssueCreateInput(BaseModel):
     component: str = "Planview AgilePlace"
